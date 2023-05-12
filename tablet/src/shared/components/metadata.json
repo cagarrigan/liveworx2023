@@ -1,0 +1,244 @@
+{
+  "name": "",
+  "version": "1.0.0",
+  "requires": [
+    "w320dp"
+  ],
+  "experiences": [
+    {
+      "vumark": "36236:20230",
+      "experienceType": "vumark",
+      "id": 1,
+      "index-keys": [
+        "urn:vuforia:vumark:36236:20230"
+      ],
+      "title": {
+        "en": "liveworx23-harpak"
+      },
+      "description": {
+        "en": "",
+        "en-US": ""
+      },
+      "requires": [
+        "AR-tracking"
+      ],
+      "tags": [],
+      "icon": "",
+      "viewName": "Home",
+      "url-template": "index.html?expId=1&vumark={{vuforia:vumark}}",
+      "entryPoint": "index.html?expId=1",
+      "thumbnail": ""
+    }
+  ],
+  "widgetsUsage": [
+    {
+      "timestamp": "2023-05-05T22:38:14.150Z",
+      "action": "PUBLISH",
+      "usage": {
+        "twx-view": 1,
+        "twx-dt-view": 1,
+        "twx-dt-model": 3,
+        "twx-dt-wayfinder": 1,
+        "twx-overlay": 1,
+        "twx-overlay-container": 5,
+        "twx-overlay-body": 1,
+        "twx-button": 1,
+        "twx-textarea": 1
+      }
+    },
+    {
+      "timestamp": "2023-05-05T22:39:20.740Z",
+      "action": "PUBLISH",
+      "usage": {
+        "twx-view": 1,
+        "twx-dt-view": 1,
+        "twx-dt-model": 3,
+        "twx-dt-wayfinder": 1,
+        "twx-dt-target-spatial": 1,
+        "twx-overlay": 1,
+        "twx-overlay-container": 5,
+        "twx-overlay-body": 1,
+        "twx-button": 1,
+        "twx-textarea": 1
+      }
+    },
+    {
+      "timestamp": "2023-05-05T22:40:12.439Z",
+      "action": "PUBLISH",
+      "usage": {
+        "twx-view": 1,
+        "twx-dt-view": 1,
+        "twx-dt-model": 3,
+        "twx-dt-wayfinder": 1,
+        "twx-dt-target-spatial": 1,
+        "twx-overlay": 1,
+        "twx-overlay-container": 5,
+        "twx-overlay-body": 1,
+        "twx-button": 1,
+        "twx-textarea": 1
+      }
+    },
+    {
+      "timestamp": "2023-05-09T18:59:39.753Z",
+      "action": "PUBLISH",
+      "usage": {
+        "twx-view": 1,
+        "twx-dt-view": 1,
+        "twx-dt-model": 3,
+        "twx-dt-wayfinder": 1,
+        "twx-dt-target-spatial": 1,
+        "twx-overlay": 1,
+        "twx-overlay-container": 5,
+        "twx-overlay-body": 1,
+        "twx-button": 1,
+        "twx-textarea": 1
+      }
+    },
+    {
+      "timestamp": "2023-05-09T19:00:58.337Z",
+      "action": "PUBLISH",
+      "usage": {
+        "twx-view": 1,
+        "twx-dt-view": 1,
+        "twx-dt-model": 3,
+        "twx-dt-wayfinder": 1,
+        "twx-dt-target-spatial": 1,
+        "twx-overlay": 1,
+        "twx-overlay-container": 5,
+        "twx-overlay-body": 1,
+        "twx-button": 1,
+        "twx-textarea": 1
+      }
+    },
+    {
+      "timestamp": "2023-05-11T15:40:41.636Z",
+      "action": "PUBLISH",
+      "usage": {
+        "twx-view": 1,
+        "twx-dt-view": 1,
+        "twx-dt-model": 3,
+        "twx-dt-wayfinder": 1,
+        "twx-dt-target-spatial": 1,
+        "twx-overlay": 1,
+        "twx-overlay-container": 5,
+        "twx-overlay-body": 1,
+        "twx-button": 1,
+        "twx-textarea": 1
+      }
+    },
+    {
+      "timestamp": "2023-05-11T15:55:14.279Z",
+      "action": "PUBLISH",
+      "usage": {
+        "twx-view": 1,
+        "twx-dt-view": 1,
+        "twx-dt-model": 4,
+        "twx-dt-wayfinder": 1,
+        "twx-dt-target-model-combined": 1,
+        "twx-overlay": 1,
+        "twx-overlay-container": 5,
+        "twx-overlay-body": 1,
+        "twx-button": 1,
+        "twx-textarea": 1
+      }
+    },
+    {
+      "timestamp": "2023-05-11T15:59:27.609Z",
+      "action": "PUBLISH",
+      "usage": {
+        "twx-view": 1,
+        "twx-dt-view": 1,
+        "twx-dt-model": 4,
+        "twx-dt-wayfinder": 1,
+        "twx-dt-target-model-combined": 1,
+        "twx-overlay": 1,
+        "twx-overlay-container": 5,
+        "twx-overlay-body": 1,
+        "twx-button": 1,
+        "twx-textarea": 1
+      }
+    },
+    {
+      "timestamp": "2023-05-11T16:08:10.009Z",
+      "action": "PUBLISH",
+      "usage": {
+        "twx-view": 1,
+        "twx-dt-view": 1,
+        "twx-dt-model": 4,
+        "twx-dt-wayfinder": 1,
+        "twx-dt-target-model-combined": 1,
+        "twx-overlay": 1,
+        "twx-overlay-container": 5,
+        "twx-overlay-body": 1,
+        "twx-button": 1,
+        "twx-textarea": 1
+      }
+    },
+    {
+      "timestamp": "2023-05-11T16:11:18.164Z",
+      "action": "PUBLISH",
+      "usage": {
+        "twx-view": 1,
+        "twx-dt-view": 1,
+        "twx-dt-model": 4,
+        "twx-dt-wayfinder": 1,
+        "twx-dt-target-model-combined": 1,
+        "twx-overlay": 1,
+        "twx-overlay-container": 5,
+        "twx-overlay-body": 1,
+        "twx-button": 1,
+        "twx-textarea": 1
+      }
+    },
+    {
+      "timestamp": "2023-05-11T16:13:41.186Z",
+      "action": "PUBLISH",
+      "usage": {
+        "twx-view": 1,
+        "twx-dt-view": 1,
+        "twx-dt-model": 4,
+        "twx-dt-wayfinder": 1,
+        "twx-dt-target-model-combined": 1,
+        "twx-overlay": 1,
+        "twx-overlay-container": 5,
+        "twx-overlay-body": 1,
+        "twx-button": 1,
+        "twx-textarea": 1
+      }
+    },
+    {
+      "timestamp": "2023-05-12T11:56:45.119Z",
+      "action": "PUBLISH",
+      "usage": {
+        "twx-view": 1,
+        "twx-dt-view": 1,
+        "twx-dt-model": 4,
+        "twx-dt-wayfinder": 1,
+        "twx-dt-target-model-combined": 1,
+        "twx-overlay": 1,
+        "twx-overlay-container": 5,
+        "twx-overlay-body": 1,
+        "twx-button": 1,
+        "twx-textarea": 1
+      }
+    },
+    {
+      "timestamp": "2023-05-12T17:40:49.741Z",
+      "action": "PUBLISH",
+      "usage": {
+        "twx-view": 1,
+        "twx-dt-view": 1,
+        "twx-dt-model": 4,
+        "twx-dt-wayfinder": 1,
+        "twx-dt-target-model-combined": 1,
+        "twx-overlay": 1,
+        "twx-overlay-container": 5,
+        "twx-overlay-body": 1,
+        "twx-textarea": 1,
+        "twx-button": 1
+      }
+    }
+  ],
+  "accessType": "public",
+  "designedfor": []
+}

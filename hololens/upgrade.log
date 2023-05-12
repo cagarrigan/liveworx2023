@@ -1,0 +1,70 @@
+[2023-05-07T14:23:56.501Z] debug: [twx-studio:upgrade:liveworx23-harpak-hololens] Begin upgrade of project
+[2023-05-07T14:23:56.503Z] info: [twx-studio:upgrade:liveworx23-harpak-hololens] Upgrading project
+[2023-05-07T14:23:56.508Z] debug: [twx-studio:upgrade:liveworx23-harpak-hololens] Make sure there are not any stale files lying around
+[2023-05-07T14:23:56.511Z] debug: [twx-studio:upgrade:liveworx23-harpak-hololens] Create .gitignore for project dir
+[2023-05-07T14:23:56.513Z] debug: [twx-studio:upgrade:liveworx23-harpak-hololens] Copying /src/**/* to project, overwrite=false
+[2023-05-07T14:23:56.516Z] debug: [twx-studio:upgrade:liveworx23-harpak-hololens] Copying /**/* to project, skip /src/**/*,  overwrite=true
+[2023-05-07T14:23:56.658Z] debug: [twx-studio:upgrade:liveworx23-harpak-hololens] Copy of project files complete
+[2023-05-07T14:23:56.659Z] debug: [twx-studio:upgrade:liveworx23-harpak-hololens] Updating version to 
+[2023-05-07T14:23:56.659Z] debug: [twx-studio:upgrade:liveworx23-harpak-hololens] Copying project specific default resources.
+[2023-05-07T14:23:56.902Z] debug: [twx-studio:upgrade:liveworx23-harpak-hololens] onupgrade sucessful, now build the project
+[2023-05-07T14:23:56.903Z] debug: [twx-studio:upgrade:liveworx23-harpak-hololens] BEGIN buildApp
+[2023-05-07T14:23:56.903Z] debug: [twx-studio:upgrade:liveworx23-harpak-hololens] write settings
+[2023-05-07T14:23:56.904Z] debug: [twx-studio:upgrade:liveworx23-harpak-hololens] copy runtime extensions
+[2023-05-07T14:25:21.870Z] debug: [twx-studio:upgrade:liveworx23-harpak-hololens] packageThemeSet
+[2023-05-07T14:25:24.670Z] debug: [twx-studio:upgrade:liveworx23-harpak-hololens] onBuild
+[2023-05-07T14:25:24.671Z] info: [twx-studio:upgrade:liveworx23-harpak-hololens] Building ves-ar-extension app:
+[2023-05-07T14:25:24.705Z] debug: [twx-studio:upgrade:liveworx23-harpak-hololens] pathDir
+[2023-05-07T14:25:24.705Z] debug: [twx-studio:upgrade:liveworx23-harpak-hololens] scaffoldDir
+[2023-05-07T14:25:24.705Z] debug: [twx-studio:upgrade:liveworx23-harpak-hololens] copySrc
+[2023-05-07T14:25:24.951Z] debug: [twx-studio:upgrade:liveworx23-harpak-hololens] buildApp
+[2023-05-07T14:25:25.200Z] debug: [twx-studio:upgrade:liveworx23-harpak-hololens] END buildApp
+[2023-05-07T14:25:25.200Z] debug: [twx-studio:upgrade:liveworx23-harpak-hololens] Build succeeded.
+
+2023-05-09T11:16:32.067Z: Project "liveworx23-harpak-hololens" saved as new project "liveworx23-harpak-hololens-copy"[2023-05-09T11:16:33.445Z] debug: [twx-studio:upgrade:liveworx23-harpak-hololens-copy] Begin upgrade of project
+[2023-05-09T11:16:33.446Z] info: [twx-studio:upgrade:liveworx23-harpak-hololens-copy] Upgrading project
+[2023-05-09T11:16:33.477Z] debug: [twx-studio:upgrade:liveworx23-harpak-hololens-copy] Make sure there are not any stale files lying around
+[2023-05-09T11:16:33.477Z] debug: [twx-studio:upgrade:liveworx23-harpak-hololens-copy] Removing 
+[2023-05-09T11:16:33.503Z] debug: [twx-studio:upgrade:liveworx23-harpak-hololens-copy] Create .gitignore for project dir
+[2023-05-09T11:16:33.504Z] debug: [twx-studio:upgrade:liveworx23-harpak-hololens-copy] Copying /src/**/* to project, overwrite=false
+[2023-05-09T11:16:33.506Z] debug: [twx-studio:upgrade:liveworx23-harpak-hololens-copy] Copying /**/* to project, skip /src/**/*,  overwrite=true
+[2023-05-09T11:16:33.592Z] debug: [twx-studio:upgrade:liveworx23-harpak-hololens-copy] Copy of project files complete
+[2023-05-09T11:16:33.592Z] debug: [twx-studio:upgrade:liveworx23-harpak-hololens-copy] Updating version to 
+[2023-05-09T11:16:33.592Z] debug: [twx-studio:upgrade:liveworx23-harpak-hololens-copy] Copying project specific default resources.
+[2023-05-09T11:16:33.728Z] debug: [twx-studio:upgrade:liveworx23-harpak-hololens-copy] onupgrade sucessful, now build the project
+[2023-05-09T11:16:33.728Z] debug: [twx-studio:upgrade:liveworx23-harpak-hololens-copy] BEGIN buildApp
+[2023-05-09T11:16:33.728Z] debug: [twx-studio:upgrade:liveworx23-harpak-hololens-copy] write settings
+[2023-05-09T11:16:33.729Z] debug: [twx-studio:upgrade:liveworx23-harpak-hololens-copy] copy runtime extensions
+[2023-05-09T11:16:34.478Z] debug: [twx-studio:upgrade:liveworx23-harpak-hololens-copy] packageThemeSet
+[2023-05-09T11:16:37.633Z] debug: [twx-studio:upgrade:liveworx23-harpak-hololens-copy] onBuild
+[2023-05-09T11:16:37.634Z] info: [twx-studio:upgrade:liveworx23-harpak-hololens-copy] Building ves-ar-extension app:
+[2023-05-09T11:16:37.766Z] debug: [twx-studio:upgrade:liveworx23-harpak-hololens-copy] pathDir
+[2023-05-09T11:16:37.766Z] debug: [twx-studio:upgrade:liveworx23-harpak-hololens-copy] scaffoldDir
+[2023-05-09T11:16:37.766Z] debug: [twx-studio:upgrade:liveworx23-harpak-hololens-copy] copySrc
+[2023-05-09T11:16:38.013Z] debug: [twx-studio:upgrade:liveworx23-harpak-hololens-copy] buildApp
+[2023-05-09T11:16:38.804Z] debug: [twx-studio:upgrade:liveworx23-harpak-hololens-copy] END buildApp
+[2023-05-09T11:16:38.805Z] debug: [twx-studio:upgrade:liveworx23-harpak-hololens-copy] Build succeeded.
+
+2023-05-09T21:45:31.735Z: Project "liveworx23-harpak-hololens-copy" saved as new project "liveworx23-harpak-hololens"[2023-05-09T21:45:41.637Z] debug: [twx-studio:upgrade:liveworx23-harpak-hololens] Begin upgrade of project
+[2023-05-09T21:45:41.639Z] info: [twx-studio:upgrade:liveworx23-harpak-hololens] Upgrading project
+[2023-05-09T21:45:41.671Z] debug: [twx-studio:upgrade:liveworx23-harpak-hololens] Make sure there are not any stale files lying around
+[2023-05-09T21:45:41.672Z] debug: [twx-studio:upgrade:liveworx23-harpak-hololens] Removing 
+[2023-05-09T21:45:41.697Z] debug: [twx-studio:upgrade:liveworx23-harpak-hololens] Create .gitignore for project dir
+[2023-05-09T21:45:41.697Z] debug: [twx-studio:upgrade:liveworx23-harpak-hololens] Copying /src/**/* to project, overwrite=false
+[2023-05-09T21:45:41.700Z] debug: [twx-studio:upgrade:liveworx23-harpak-hololens] Copying /**/* to project, skip /src/**/*,  overwrite=true
+[2023-05-09T21:45:41.790Z] debug: [twx-studio:upgrade:liveworx23-harpak-hololens] Copy of project files complete
+[2023-05-09T21:45:41.790Z] debug: [twx-studio:upgrade:liveworx23-harpak-hololens] Updating version to 
+[2023-05-09T21:45:41.790Z] debug: [twx-studio:upgrade:liveworx23-harpak-hololens] Copying project specific default resources.
+[2023-05-09T21:45:41.918Z] debug: [twx-studio:upgrade:liveworx23-harpak-hololens] onupgrade sucessful, now build the project
+[2023-05-09T21:45:41.918Z] debug: [twx-studio:upgrade:liveworx23-harpak-hololens] BEGIN buildApp
+[2023-05-09T21:45:41.918Z] debug: [twx-studio:upgrade:liveworx23-harpak-hololens] write settings
+[2023-05-09T21:45:41.919Z] debug: [twx-studio:upgrade:liveworx23-harpak-hololens] copy runtime extensions
+[2023-05-09T21:45:42.358Z] debug: [twx-studio:upgrade:liveworx23-harpak-hololens] packageThemeSet
+[2023-05-09T21:45:44.735Z] debug: [twx-studio:upgrade:liveworx23-harpak-hololens] onBuild
+[2023-05-09T21:45:44.735Z] info: [twx-studio:upgrade:liveworx23-harpak-hololens] Building ves-ar-extension app:
+[2023-05-09T21:45:44.740Z] debug: [twx-studio:upgrade:liveworx23-harpak-hololens] pathDir
+[2023-05-09T21:45:44.740Z] debug: [twx-studio:upgrade:liveworx23-harpak-hololens] scaffoldDir
+[2023-05-09T21:45:44.740Z] debug: [twx-studio:upgrade:liveworx23-harpak-hololens] copySrc
+[2023-05-09T21:45:44.950Z] debug: [twx-studio:upgrade:liveworx23-harpak-hololens] buildApp
+[2023-05-09T21:45:45.421Z] debug: [twx-studio:upgrade:liveworx23-harpak-hololens] END buildApp
+[2023-05-09T21:45:45.421Z] debug: [twx-studio:upgrade:liveworx23-harpak-hololens] Build succeeded.

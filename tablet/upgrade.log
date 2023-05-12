@@ -1,0 +1,21 @@
+[2023-05-05T15:16:05.613Z] debug: [twx-studio:upgrade:liveworx23-harpak] Begin upgrade of project
+[2023-05-05T15:16:05.614Z] info: [twx-studio:upgrade:liveworx23-harpak] Upgrading project
+[2023-05-05T15:16:05.643Z] debug: [twx-studio:upgrade:liveworx23-harpak] Make sure there are not any stale files lying around
+[2023-05-05T15:16:05.645Z] debug: [twx-studio:upgrade:liveworx23-harpak] Create .gitignore for project dir
+[2023-05-05T15:16:05.646Z] debug: [twx-studio:upgrade:liveworx23-harpak] Copying /src/**/* to project, overwrite=false
+[2023-05-05T15:16:05.647Z] debug: [twx-studio:upgrade:liveworx23-harpak] Copying /**/* to project, skip /src/**/*,  overwrite=true
+[2023-05-05T15:16:05.730Z] debug: [twx-studio:upgrade:liveworx23-harpak] Copy of project files complete
+[2023-05-05T15:16:05.730Z] debug: [twx-studio:upgrade:liveworx23-harpak] Updating version to 
+[2023-05-05T15:16:05.731Z] debug: [twx-studio:upgrade:liveworx23-harpak] onupgrade sucessful, now build the project
+[2023-05-05T15:16:05.731Z] debug: [twx-studio:upgrade:liveworx23-harpak] BEGIN buildApp
+[2023-05-05T15:16:05.731Z] debug: [twx-studio:upgrade:liveworx23-harpak] write settings
+[2023-05-05T15:16:05.731Z] debug: [twx-studio:upgrade:liveworx23-harpak] copy runtime extensions
+[2023-05-05T15:16:35.603Z] debug: [twx-studio:upgrade:liveworx23-harpak] packageThemeSet
+[2023-05-05T15:16:38.163Z] debug: [twx-studio:upgrade:liveworx23-harpak] onBuild
+[2023-05-05T15:16:38.163Z] info: [twx-studio:upgrade:liveworx23-harpak] Building ves-ar-extension app:
+[2023-05-05T15:16:38.181Z] debug: [twx-studio:upgrade:liveworx23-harpak] pathDir
+[2023-05-05T15:16:38.181Z] debug: [twx-studio:upgrade:liveworx23-harpak] scaffoldDir
+[2023-05-05T15:16:38.181Z] debug: [twx-studio:upgrade:liveworx23-harpak] copySrc
+[2023-05-05T15:16:38.381Z] debug: [twx-studio:upgrade:liveworx23-harpak] buildApp
+[2023-05-05T15:16:38.593Z] debug: [twx-studio:upgrade:liveworx23-harpak] END buildApp
+[2023-05-05T15:16:38.593Z] debug: [twx-studio:upgrade:liveworx23-harpak] Build succeeded.

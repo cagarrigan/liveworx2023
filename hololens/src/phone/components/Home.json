@@ -1,0 +1,255 @@
+{
+  "attributes": {
+    "twx-widget": "",
+    "widget-id": "view-1",
+    "widget-name": "view-1",
+    "is-widget-container": "true",
+    "viewtype": "ar"
+  },
+  "children": [
+    {
+      "name": "twx-container-content",
+      "children": [
+        {
+          "attributes": {
+            "twx-widget": "",
+            "widget-id": "3DContainer-1",
+            "widget-name": "3D Container",
+            "is-widget-container": "true",
+            "enabletrackingevents": "true",
+            "dropshadow": "true"
+          },
+          "name": "twx-dt-view",
+          "children": [
+            {
+              "name": "twx-container-content",
+              "children": [
+                {
+                  "attributes": {
+                    "twx-widget": "",
+                    "widget-id": "seeinside-shder",
+                    "widget-name": "seeinside-shder",
+                    "text": "<script name=\"xray2hl\" type=\"x-shader/x-fragment\">\ncbuffer ShaderConstantBuffer : register(b0)\n{\n    float4 highlightColor;\n    //----------------------------------- (16 byte boundary)\n    bool   useTexture;\n    bool   useLight;\n    float  transparency;\n    int    pad;\n};\n\ncbuffer RenderConstantBuffer : register(b1)\n{\n    //----------------------------------- (16 byte boundary)\n    float  tick;\n    float3 ding;\n};\n\ncbuffer TMLDefinedConstants : register(b10)\n{\n    float  farFade;\n    float  nearFade;\n    float  attenuate;\n    float  ambient;\n    float  r;\n    float  g;\n    float  b;\n};\n\n// Per-pixel color data passed through the pixel shader.\nstruct PixelShaderInput\n{\n    half4  pos : SV_POSITION;\n    half3  I   : NORMAL0;\n    half3  N   : TEXCOORD0;\n    half3  P   : TEXCOORD1;\n};\n\n// The pixel shader passes through the color data. The color data from\n// is interpolated and assigned to a pixel at the rasterization step.\nmin16float4 main(PixelShaderInput input) : SV_TARGET\n{\n    min16float4 highlightColorFinal = min16float4(0,0,0,0);\n    if (highlightColor.x >= 0.) {\n        highlightColorFinal = min16float4(highlightColor);\n    }\n    const float intensity = 1.0;\n    const float falloff   = 1.0;\n    \n    min16float4 color = min16float4(r, g, b, transparency);\n    float     opacity = abs(dot(normalize(-input.N), normalize(-input.I)));\n    float        xray = ambient + intensity * (1. - pow(opacity, falloff));\n\n    min16float4 finalShadedColor = min16float4(saturate(xray * color).xyz, transparency * opacity);\n    min16float4 highlightedOutputColor;\n    highlightedOutputColor.xyz = lerp(finalShadedColor.xyz, highlightColorFinal.xyz, highlightColorFinal.w);\n    highlightedOutputColor.w   = min16float(finalShadedColor.w);\n\n    // have the effect fade on (parameterised) distance setting\n    float dz = length(input.I);\n    float mf = saturate(1. - attenuate);\n    float cd = farFade > 0. ? smoothstep( (farFade * 2.), farFade, dz) : 1. ;      \n    float od = smoothstep( (nearFade / 2.), nearFade, dz);\n    float gz = mf * clamp(cd * od, 0., 1.);\n    \n    return highlightedOutputColor * gz;\n}\n</script>\n<script name=\"xray2hl\" type=\"x-shader/x-vertex\">\n// A constant buffer that stores the model transform.\ncbuffer ModelConstantBuffer : register(b0)\n{\n    float4x4 model;\n    float4x4 inverse;\n};\n\ncbuffer MaterialConstantBuffer : register(b1)\n{\n    float4   diffuseColor;\n};\n\n// A constant buffer that stores each set of view and projection matrices in column-major format.\ncbuffer ViewProjectionConstantBuffer : register(b2)\n{\n    float4x4 viewProjection[2];\n    float4x4 viewInverse;\n};\n\n// Per-vertex data used as input to the vertex shader.\nstruct VertexShaderInput\n{\n    half4 pos     : POSITION;\n    half4 normal  : NORMAL;\n    half2 texcoord: TEXCOORD;\n    uint  instId  : SV_InstanceID;\n};\n\n// Per-vertex data passed to the geometry shader.\n// Note that the render target array index will be set by the geometry shader\n// using the value of viewId.\nstruct VertexShaderOutput\n{\n    half4 pos     : SV_POSITION;\n    half3 I       : NORMAL0;\n    half3 N       : TEXCOORD0;\n    half3 P       : TEXCOORD1;\n    uint  rtvId   : SV_RenderTargetArrayIndex; // SV_InstanceID % 2\n};\n\n// Simple shader to do vertex processing on the GPU.\nVertexShaderOutput main(VertexShaderInput input)\n{\n    VertexShaderOutput output;\n    half4 pos = half4(input.pos);\n\n    // Note which view this vertex has been sent to. Used for matrix lookup.\n    // Taking the modulo of the instance ID allows geometry instancing to be used\n    // along with stereo instanced drawing; in that case, two copies of each\n    // instance would be drawn, one for left and one for right.\n    int idx = input.instId % 2;\n\n    // Transform the vertex position into world space.\n    pos = mul(pos, model);\n    output.P = pos.xyz;\n\n    // I = v pos in view space\n    half4 eye = half4(0., 0., 0., 1.);\n    output.I = (pos - mul(eye, viewInverse)).xyz;\n\n    // Correct for perspective and project the vertex position onto the screen.\n    pos = mul(pos, viewProjection[idx]);\n    output.pos = (half4)pos;\n\n    // N = normal in view space\n    output.N = -normalize(mul(input.normal, inverse).xyz);\n\n    // Set the instance ID. The pass-through geometry shader will set the\n    // render target array index to whatever value is set here.\n    output.rtvId = idx;\n\n    return output;\n}\n</script>\n\n<script name=\"xray2gl\" type=\"x-shader/x-fragment\">\n  precision mediump float;\n\n  varying vec3 I;\n  varying vec3 N;\n  \n  uniform float falloff;\n  uniform float ambient;\n  uniform float intensity;\n  uniform float r;\n  uniform float g;\n  uniform float b;\n  uniform float farFade;\n  uniform float nearFade;\n  uniform float attenuate;\n\n  void main() {\n    float faf = 1. + falloff;\n    float ity = 1. + intensity;\n    float mf  = clamp(1. - attenuate,0., 1.);\n    float dp  = dot(normalize(-N), normalize(-I));\n    if (dp < 0.) \n      discard;\n    else {\n      \n      float dz = length(I);\n      float cd = (farFade > 0.) ? smoothstep( (farFade * 2.), farFade, dz) : 1. ;\n      float od = smoothstep( (nearFade / 2.), nearFade, dz);\n      float gz = mf * clamp(cd * od, 0., 1.) ; \n\n      float op = ambient + ity * (1.0 - pow(abs(dp), faf));\n      \n      gl_FragColor = gz * op * vec4(r, g, b, 1.);\n    }\n  }\n</script>\n\n<script name=\"xray2gl\" type=\"x-shader/x-vertex\">\n  attribute vec3 vertexPosition;\n  attribute vec3 vertexNormal;\n\t\t\t\n  uniform mat4 modelViewProjectionMatrix;\n  uniform mat4 modelViewMatrix;\n  uniform mat4 normalMatrix;\n\n  varying vec3 I;\n  varying vec3 N;\n\n  void main() {\n    vec4 vp     = vec4(vertexPosition, 1.);\n    gl_Position = modelViewProjectionMatrix * vp;\n    vec4 P      = modelViewMatrix * vp;\n    I           = P.xyz - vec3(0);\n    N           = vec3(normalMatrix * vec4(vertexNormal, 0.));\n  }\n</script>\n<script name=\"desaturatedhl\" type=\"x-shader/x-fragment\">\n\ncbuffer ShaderConstantBuffer : register(b0)\n{\n    float4  highlightColor;\n    //----------------------------------- (16 byte boundary)\n    bool    useTexture;\n    bool    useLight;\n    float   transparency;\n    int     pad;\n};\n\ncbuffer RenderConstantBuffer : register(b1)\n{\n    //----------------------------------- (16 byte boundary)\n    float   tick;\n    float3  ding;\n};\n\ncbuffer MaterialConstantBuffer : register(b2)\n{\n    float4  diffuseColor;\n    int     twoSided;\n    int     useTextureMap;\n    int     useNormalMap;\n    int     useSpecularMap;\n};\ncbuffer TMLDefinedConstants : register(b10)\n{\n    float   nearFade;\n    float   blend;\n};\n\n// Per-pixel color data passed through the pixel shader.\nstruct PixelShaderInput\n{\n    half4   pos : SV_POSITION;\n    half3   I   : NORMAL0;\n    half3   N   : TEXCOORD0;\n    half3   P   : TEXCOORD1;\n};\n\nhalf4 luma(half4 inc) \n{\n    // desaturate color - this is the S in the HSV equation\n    float mc = min(min(inc.x, inc.y), inc.z);\n    float xc = max(max(inc.x, inc.y), inc.z);\n    float dc = (mc + xc) / 2.;\n    return half4(dc, dc, dc, inc.w);\n}\n\n// The pixel shader passes through the color data. The color data from\n// is interpolated and assigned to a pixel at the rasterization step.\nmin16float4 main(PixelShaderInput input) : SV_TARGET\n{\n    min16float4 highlightColorFinal = min16float4(0,0,0,0);\n    if (highlightColor.x >= 0.0) {\n        highlightColorFinal = min16float4(highlightColor);\n    }\n    \n    float4 base   = float4(diffuseColor.xyz,transparency);\n    float4 color  = lerp(luma(base),base,blend);\n    float opacity = abs(dot(normalize(-input.N), normalize(-input.I)));\n\n    min16float4 finalShadedColor = min16float4(color * opacity);\n\n    // fade when really close\n    float od = length(input.I);\n    float gz = smoothstep((nearFade / 2.), nearFade, od);\n    \n    min16float4 highlightedOutputColor;\n    highlightedOutputColor.xyz = lerp(finalShadedColor.xyz, highlightColorFinal.xyz, highlightColorFinal.w);\n    highlightedOutputColor.w = min16float(finalShadedColor.w);\n    return highlightedOutputColor * gz;\n}\n</script>\n<script name=\"desaturatedhl\" type=\"x-shader/x-vertex\">\n// A constant buffer that stores the model transform.\ncbuffer ModelConstantBuffer : register(b0)\n{\n    float4x4 model;\n    float4x4 inverse;\n};\n\ncbuffer MaterialConstantBuffer : register(b1)\n{\n    float4   diffuseColor;\n};\n\n// A constant buffer that stores each set of view and projection matrices in column-major format.\ncbuffer ViewProjectionConstantBuffer : register(b2)\n{\n    float4x4 viewProjection[2];\n    float4x4 viewInverse;\n};\n\n// Per-vertex data used as input to the vertex shader.\nstruct VertexShaderInput\n{\n    half4 pos     : POSITION;\n    half4 normal  : NORMAL;\n    half2 texcoord: TEXCOORD;\n    uint  instId  : SV_InstanceID;\n};\n\n// Per-vertex data passed to the geometry shader.\n// Note that the render target array index will be set by the geometry shader\n// using the value of viewId.\nstruct VertexShaderOutput\n{\n    half4 pos     : SV_POSITION;\n    half3 I       : NORMAL0;\n    half3 N       : TEXCOORD0;\n    half3 P       : TEXCOORD1;\n    uint  rtvId   : SV_RenderTargetArrayIndex; // SV_InstanceID % 2\n};\n\n// Simple shader to do vertex processing on the GPU.\nVertexShaderOutput main(VertexShaderInput input)\n{\n    VertexShaderOutput output;\n    half4 pos = half4(input.pos);\n\n    // Note which view this vertex has been sent to. Used for matrix lookup.\n    // Taking the modulo of the instance ID allows geometry instancing to be used\n    // along with stereo instanced drawing; in that case, two copies of each\n    // instance would be drawn, one for left and one for right.\n    int idx = input.instId % 2;\n\n    // Transform the vertex position into world space.\n    pos = mul(pos, model);\n    output.P = pos.xyz;\n\n    // I = v pos in view space\n    half4 eye = half4(0., 0., 0., 1.);\n    output.I = (pos - mul(eye, viewInverse)).xyz;\n\n    // Correct for perspective and project the vertex position onto the screen.\n    pos = mul(pos, viewProjection[idx]);\n    output.pos = (half4)pos;\n\n    // N = normal in view space\n    output.N = -normalize(mul(input.normal, inverse).xyz);\n\n    // Set the instance ID. The pass-through geometry shader will set the\n    // render target array index to whatever value is set here.\n   output.rtvId = idx;\n\n    return output;\n}\n</script>\n\n<script name=\"desaturatedgl\" type=\"x-shader/x-fragment\">\n  precision mediump float;\n  const float PI=3.1415926; \n  varying vec3 vertex;\n  varying vec3 normal;\n varying vec3 I;\n\n  uniform float blend;\t\n  uniform float nearFade;\t\t  \n  uniform vec4 surfaceColor;\n\n  const vec4 ambientColor = vec4(0.15, 0.15, 0.15, 1.0); \n  const vec4 specColor    = vec4(0.05, 0.05, 0.05, 1.0);\n  \n  vec4 luma(vec4 cin) {\n     float min = min( min(cin.x, cin.y), cin.z );\n     float max = max( max(cin.x, cin.y), cin.z );\n     float v = (max+min)/2.;\n     return vec4(v,v,v,cin.w); \n  }\n\n  void main() {\n    vec4 color = mix(luma(surfaceColor),surfaceColor,blend);\n\n    vec3 lightPos    = vec3(1.,1.,1.);\n    vec3 lightDir    = -normalize(lightPos);\n    vec3 finalNormal = normalize(normal);\n\t\t\t\t\n    float lambertian = dot(lightDir,finalNormal);\n    float specular   = 0.0;\n    vec3 viewDir     = normalize(-vertex);\n\n    if (lambertian < 0.0) \n        finalNormal = - finalNormal;\n\n    vec3 reflectDir = reflect(-lightDir, finalNormal);\n    float specAngle = max(dot(reflectDir, viewDir), 0.0);\n           specular = pow(specAngle, 4.0);\n\n    color = ambientColor * color +\t\n                   color * abs(lambertian)   +   \n\t       specColor * specular;\t\t\t\t\t\n    color.a = 1.;\t\n\n      float dz = length(I);\n      float od = smoothstep( nearFade, (nearFade / 2.),  dz);\n      float gz = 1. - clamp(od, 0., 1.) ;     \n\n    gl_FragColor=gz * vec4(color);\n  }\n</script>\n<script name=\"desaturatedgl\" type=\"x-shader/x-vertex\">\n  attribute vec3 vertexPosition;\n  attribute vec3 vertexNormal;\n\t\t\t\n  varying   vec3 normal;  \n  varying   vec3 vertex;\n  varying   vec3 I;\n  \n  uniform   mat4 modelViewProjectionMatrix;\n  uniform   mat4 modelViewMatrix;\n  uniform   mat4 normalMatrix;\n\n  void main() {\n    vec4 vp     = vec4(vertexPosition, 1.0);\n    gl_Position = modelViewProjectionMatrix * vp;\n    normal      = vec3(normalize(normalMatrix * vec4(vertexNormal,0.0)));\n    vertex      = vp.xyz;\n\n    vec4 P      = modelViewMatrix * vp;\n    I           = P.xyz - vec3(0);\n  }\n</script>"
+                  },
+                  "name": "twx-tml-text"
+                },
+                {
+                  "attributes": {
+                    "twx-widget": "",
+                    "widget-id": "iot-panel-shaders",
+                    "widget-name": "iot-panel-shaders",
+                    "text": "<script name=\"panelHilite2hl\" type=\"x-shader/x-vertex\">\n\n// A constant buffer that stores the model transform.\ncbuffer ModelConstantBuffer : register(b0)\n{\n  float4x4 model;\n  float4x4 inverse;\n};\n\ncbuffer MaterialConstantBuffer : register(b1)\n{\n  float4   diffuseColor;\n};\n\n// A constant buffer that stores each set of view and projection matrices in column-major format.\ncbuffer ViewProjectionConstantBuffer : register(b2)\n{\n  float4x4 viewProjection[2];\n  float4x4 viewInverse;\n};\n\n// Per-vertex data used as input to the vertex shader.\nstruct VertexShaderInput\n{\n  half4    pos      : POSITION;\n  half2    texcoord : TEXCOORD;\n  uint     instId   : SV_InstanceID;\n};\n\n// Per-vertex data passed to the geometry shader.\n// Note that the render target array index will be set by the geometry shader\n// using the value of viewId.\nstruct VertexShaderOutput\n{\n  half4    pos      : SV_POSITION;\n  half3    I        : NORMAL0;\n  half2    tex      : TEXCOORD0;\n  uint     rtvId    : SV_RenderTargetArrayIndex; // SV_InstanceID % 2\n};\n\n// Simple shader to do vertex processing on the GPU.\nVertexShaderOutput main(VertexShaderInput input)\n{\n  VertexShaderOutput output;\n  half4 pos = half4(input.pos);\n\n  // Note which view this vertex has been sent to. Used for matrix lookup.\n  // Taking the modulo of the instance ID allows geometry instancing to be used\n  // along with stereo instanced drawing; in that case, two copies of each\n  // instance would be drawn, one for left and one for right.\n  int idx = input.instId % 2;\n\n  // Transform the vertex position into world space.\n  pos = mul(pos, model);\n  // I = v pos in view space\n  half4 eye = half4(0., 0., 0., 1.);\n  output.I  = (pos - mul(eye, viewInverse)).xyz;\n\n\n  // Correct for perspective and project the vertex position onto the screen.\n  pos        = mul(pos, viewProjection[idx]);\n  output.pos = (half4)pos;\n\n  // texture coordinate\n  output.tex = input.texcoord;\n\n  // Set the instance ID. The pass-through geometry shader will set the\n  // render target array index to whatever value is set here.\n  output.rtvId = idx;\n\n  return output;\n}\n</script>\n<script name=\"panelHilite2hl\" type=\"x-shader/x-fragment\">\nTexture2D Texture1 : register(t0);\nTexture2D Texture2 : register(t1);\nsampler Sampler    : register(s0);\n\ncbuffer ShaderConstantBuffer : register(b0)\n{\n    float4  highlightColor;\n    //----------------------------------- (16 byte boundary)\n    bool     useTexture;\n    bool     useLight;\n    float    transparency;\n    int      pad;\n};\n\ncbuffer RenderConstantBuffer : register(b1)\n{\n    //----------------------------------- (16 byte boundary)\n    float    tick;\n    float3   ding;\n};\n\ncbuffer TMLDefinedConstants : register(b10)\n{\n    float    r;\n    float    g;\n    float    b;\n    float    ff;\n    float    nf;\n};\n\ncbuffer MaterialConstantBuffer : register(b2)\n{\n    float4   diffuseColor;\n    int      twoSided;\n    int      useTextureMap;\n    int      useNormalMap;\n    int      useSpecularMap;\n};\n\ncbuffer ModelConstantBuffer : register(b3)\n{\n    float4x4 model;\n    float4x4 inverse;\n};\n\n// Per-pixel color data passed through the pixel shader.\nstruct PixelShaderInput\n{\n    half4    pos      : SV_POSITION;\n    half3    I        : NORMAL0;\n    half2    tex      : TEXCOORD0;\n};\n\n// The pixel shader passes through the color data. The color data from\n// is interpolated and assigned to a pixel at the rasterization step.\nmin16float4 main(PixelShaderInput input) : SV_TARGET\n{\n  min16float4 highlightColorFinal = min16float4(0,0,0,0);\n  if (highlightColor.x >= 0.0) {\n    highlightColorFinal = min16float4(highlightColor);\n  }\n\n  min16float4 hlt = min16float4(r,g,b,1.);\n  min16float4 tx1 = min16float4(Texture1.Sample(Sampler, input.tex));\n  min16float4 tx2 = min16float4(Texture2.Sample(Sampler, input.tex));\n\n  min16float4 rx2 = (tx2.r * hlt + min16float4(1.,1.,1.,1.) * tx2.b) * tx2.a;\n\n  float dz = length(input.I);\n  float cd = (ff > 0.) ? smoothstep((ff * 2.), ff, dz) : 1.;\n  float od = smoothstep((nf / 2.), nf, dz);\n  float gz = clamp(cd * od, 0., 1.);\n\n  min16float4 color = lerp(rx2,lerp(tx1,rx2,rx2.a),gz); //min16float4(lerp(rx2,lerp(tx1,rx2,rx2.a),gz);\n\n  min16float4 highlightedOutputColor = color + highlightColorFinal;\n  return      highlightedOutputColor;\n}\n</script>\n\n<script name=\"panelTraffichl\" type=\"x-shader/x-vertex\">\n\n// A constant buffer that stores the model transform.\ncbuffer ModelConstantBuffer : register(b0)\n{\n  float4x4 model;\n  float4x4 inverse;\n};\n\ncbuffer MaterialConstantBuffer : register(b1)\n{\n  float4   diffuseColor;\n};\n\n// A constant buffer that stores each set of view and projection matrices in column-major format.\ncbuffer ViewProjectionConstantBuffer : register(b2)\n{\n  float4x4 viewProjection[2];\n  float4x4 viewInverse;\n};\n\n// Per-vertex data used as input to the vertex shader.\nstruct VertexShaderInput\n{\n  half4    pos      : POSITION;\n  half2    texcoord : TEXCOORD;\n  uint     instId   : SV_InstanceID;\n};\n\n// Per-vertex data passed to the geometry shader.\n// Note that the render target array index will be set by the geometry shader\n// using the value of viewId.\nstruct VertexShaderOutput\n{\n  half4    pos      : SV_POSITION;\n  half3    I        : NORMAL0;\n  half2    tex      : TEXCOORD0;\n  uint     rtvId    : SV_RenderTargetArrayIndex; // SV_InstanceID % 2\n};\n\n// Simple shader to do vertex processing on the GPU.\nVertexShaderOutput main(VertexShaderInput input)\n{\n  VertexShaderOutput output;\n  half4 pos = half4(input.pos);\n\n  // Note which view this vertex has been sent to. Used for matrix lookup.\n  // Taking the modulo of the instance ID allows geometry instancing to be used\n  // along with stereo instanced drawing; in that case, two copies of each\n  // instance would be drawn, one for left and one for right.\n  int idx = input.instId % 2;\n\n  // Transform the vertex position into world space.\n  pos = mul(pos, model);\n  // I = v pos in view space\n  half4 eye = half4(0., 0., 0., 1.);\n  output.I  = (pos - mul(eye, viewInverse)).xyz;\n\n\n  // Correct for perspective and project the vertex position onto the screen.\n  pos        = mul(pos, viewProjection[idx]);\n  output.pos = (half4)pos;\n\n  // texture coordinate\n  output.tex = input.texcoord;\n\n  // Set the instance ID. The pass-through geometry shader will set the\n  // render target array index to whatever value is set here.\n  output.rtvId = idx;\n\n  return output;\n}\n</script>\n<script name=\"panelTraffichl\" type=\"x-shader/x-fragment\">\nTexture2D Texture1 : register(t0);\nTexture2D Texture2 : register(t1);\nsampler Sampler    : register(s0);\n\ncbuffer ShaderConstantBuffer : register(b0)\n{\n    float4  highlightColor;\n    //----------------------------------- (16 byte boundary)\n    bool     useTexture;\n    bool     useLight;\n    float    transparency;\n    int      pad;\n};\n\ncbuffer RenderConstantBuffer : register(b1)\n{\n    //----------------------------------- (16 byte boundary)\n    float    tick;\n    float3   ding;\n};\n\ncbuffer TMLDefinedConstants : register(b10)\n{\n    float    state;\n    float    ff;\n    float    nf;\n};\n\ncbuffer MaterialConstantBuffer : register(b2)\n{\n    float4   diffuseColor;\n    int      twoSided;\n    int      useTextureMap;\n    int      useNormalMap;\n    int      useSpecularMap;\n};\n\ncbuffer ModelConstantBuffer : register(b3)\n{\n    float4x4 model;\n    float4x4 inverse;\n};\n\n// Per-pixel color data passed through the pixel shader.\nstruct PixelShaderInput\n{\n    half4    pos      : SV_POSITION;\n    half3    I        : NORMAL0;\n    half2    tex      : TEXCOORD0;\n};\n\n// The pixel shader passes through the color data. The color data from\n// is interpolated and assigned to a pixel at the rasterization step.\nmin16float4 main(PixelShaderInput input) : SV_TARGET\n{\n  min16float4 highlightColorFinal = min16float4(0,0,0,0);\n  if (highlightColor.x >= 0.0) {\n    highlightColorFinal = min16float4(highlightColor);\n  }\n\n  min16float4 tx1 = min16float4(Texture1.Sample(Sampler, input.tex));\n  min16float4 tx2 = min16float4(Texture2.Sample(Sampler, input.tex));\n  float istate = (state == 0.) ? 1.+floor(tick*10. % 3.) : state;\n  min16float4 hlt = min16float4(istate<=2.?1.:0.,\n                                istate>=2.?1.:0.,\n                                0.,tx2.a);\n\n  min16float4 rx2 = istate==1.? tx2.r * hlt :\n                    istate==2 ? tx2.g * hlt :\n                    istate==3 ? tx2.b * hlt :\n                    min16float4(0.,0.,0.,0.);\n\n  float dz = length(input.I);\n  float cd = (ff > 0.) ? smoothstep((ff * 2.), ff, dz) : 1.;\n  float od = smoothstep((nf / 2.), nf, dz);\n  float gz = clamp(cd * od, 0., 1.);\n\n  min16float4 color = lerp(rx2,lerp(tx1,rx2,rx2.a),gz); \n\n  min16float4 highlightedOutputColor = color + highlightColorFinal;\n  return      highlightedOutputColor;\n}\n</script>\n<script name=\"panelHilitegl\" type=\"x-shader/x-fragment\">\n precision mediump float;\n varying vec2 texCoord;\n varying vec3 I;\n varying float dotp;\n \n uniform sampler2D texSampler2D;\n uniform sampler2D texSampler2D1;\n uniform float r;\n uniform float g;\n uniform float b;\n uniform float ff;\n uniform float nf;\n\nvoid main(void) {\n vec4 hlt = vec4(r,g,b,1.);\n vec4 tx1 = texture2D(texSampler2D,texCoord);\n vec4 tx2 = hlt * texture2D(texSampler2D1, texCoord);\n\n float dz = length(I);\n float cd = (ff > 0.) ? smoothstep( (ff * 2.), ff, dz) : 1. ;\n float od = smoothstep( (nf / 2.), nf, dz);\n float gz = clamp(cd * od, 0., 1.) ; \n\n if (dotp < 0.) discard; else \n gl_FragColor = gz* mix(tx1,tx2,tx2.a);\n}\n</script>\n<script name=\"panelHilitegl\" type=\"x-shader/x-vertex\">\n attribute vec3 vertexPosition;\n attribute vec2 vertexTexCoord;\n\n varying vec2 texCoord;\n varying vec3 I;\n varying float dotp;\n\n uniform mat4 modelViewProjectionMatrix;\n uniform mat4 modelViewMatrix;\n uniform mat4 modelMatrix;\n uniform mat4 normalMatrix;\n void main() {\n vec4 vertexNormal=vec4(0.,0.,1.,0.);\n vec4 vp = vec4(vertexPosition, 1.0);\n gl_Position = modelViewProjectionMatrix * vp;\n texCoord = vertexTexCoord;\n vec3 vv = vec3(modelViewMatrix * vp);\n vec3 N = vec3(normalize(normalMatrix * vertexNormal));\n I = vv.xyz - vec3(0);\n dotp = dot(N,normalize(I));\n }\n </script>\n\n\n\n\n\n<script name=\"panelHilite2gl\" type=\"x-shader/x-fragment\">\n precision mediump float;\n varying vec2 texCoord;\n varying vec3 I;\n varying float dotp;\n \n uniform sampler2D texSampler2D;\n uniform sampler2D texSampler2D1;\n uniform float r;\n uniform float g;\n uniform float b;\n uniform float ff;\n uniform float nf;\n\nvoid main(void) {\n vec4 hlt = vec4(r,g,b,1.);\n vec4 tx1 = texture2D(texSampler2D,texCoord);\n vec4 tx2 = hlt * texture2D(texSampler2D1, texCoord);\n\n float dz = length(I);\n float cd = (ff > 0.) ? smoothstep( (ff * 2.), ff, dz) : 1. ;\n float od = smoothstep( (nf / 2.), nf, dz);\n float gz = clamp(cd * od, 0., 1.) ; \n\n if (dotp < 0.) discard; else \n gl_FragColor = mix(tx2,mix(tx1,tx2,tx2.a),gz);\n}\n</script>\n<script name=\"panelHilite2gl\" type=\"x-shader/x-vertex\">\n attribute vec3 vertexPosition;\n attribute vec2 vertexTexCoord;\n\n varying vec2 texCoord;\n varying vec3 I;\n varying float dotp;\n\n uniform mat4 modelViewProjectionMatrix;\n uniform mat4 modelViewMatrix;\n uniform mat4 modelMatrix;\n uniform mat4 normalMatrix;\n void main() {\n vec4 vertexNormal=vec4(0.,0.,1.,0.);\n vec4 vp = vec4(vertexPosition, 1.0);\n gl_Position = modelViewProjectionMatrix * vp;\n texCoord = vertexTexCoord;\n vec3 vv = vec3(modelViewMatrix * vp);\n vec3 N = vec3(normalize(normalMatrix * vertexNormal));\n I = vv.xyz - vec3(0);\n dotp = dot(N,normalize(I));\n }\n </script>\n\n\n<script name=\"panelHilite2bgl\" type=\"x-shader/x-fragment\">\n precision mediump float;\n varying vec2 texCoord;\n varying vec3 I;\n varying float dotp;\n \n uniform sampler2D texSampler2D;\n uniform sampler2D texSampler2D1;\n uniform float r;\n uniform float g;\n uniform float b;\n uniform float ff;\n uniform float nf;\n\nvoid main(void) {\n vec4 hlt = vec4(r,g,b,1.);\n vec4 tx1 = texture2D(texSampler2D,texCoord);\n vec4 tx2 = texture2D(texSampler2D1, texCoord);\n\n vec4 rx2 = (tx2.r * hlt + vec4(1.)*tx2.b)*tx2.a;\n\n float dz = length(I);\n float cd = (ff > 0.) ? smoothstep( (ff * 2.), ff, dz) : 1. ;\n float od = smoothstep( (nf / 2.), nf, dz);\n float gz = clamp(cd * od, 0., 1.) ; \n\n if (dotp < 0.) tx1 = mix(tx1,vec4(0.,0.,0.,tx1.a),-dotp); //discard; else \n gl_FragColor = mix(rx2,mix(tx1,rx2,rx2.a),gz);\n}\n</script>\n<script name=\"panelHilite2bgl\" type=\"x-shader/x-vertex\">\n attribute vec3 vertexPosition;\n attribute vec2 vertexTexCoord;\n\n varying vec2 texCoord;\n varying vec3 I;\n varying float dotp;\n\n uniform mat4 modelViewProjectionMatrix;\n uniform mat4 modelViewMatrix;\n uniform mat4 modelMatrix;\n uniform mat4 normalMatrix;\n void main() {\n vec4 vertexNormal=vec4(0.,0.,1.,0.);\n vec4 vp = vec4(vertexPosition, 1.0);\n gl_Position = modelViewProjectionMatrix * vp;\n texCoord = vertexTexCoord;\n vec3 vv = vec3(modelViewMatrix * vp);\n vec3 N = vec3(normalize(normalMatrix * vertexNormal));\n I = vv.xyz - vec3(0);\n dotp = dot(N,normalize(I));\n }\n </script>\n\n\n\n<script name=\"panelHilite3gl\" type=\"x-shader/x-fragment\">\n precision mediump float;\n varying vec2 texCoord;\n varying vec3 I;\n varying float dotp;\n \n uniform sampler2D texSampler2D;\n uniform sampler2D imgB;\n uniform sampler2D imgC;\n uniform float r;\n uniform float g;\n uniform float b;\n uniform float ff;\n uniform float nf;\n\nvoid main(void) {\n vec4 hlt = vec4(r,g,b,1.);\n vec4 tx1 = texture2D(texSampler2D,texCoord);\n vec4 tx2 = hlt * texture2D(imgB, texCoord);\n vec4 tx3 = texture2D(imgC, texCoord);\n\n float dz = length(I);\n float cd = (ff > 0.) ? smoothstep( (ff * 2.), ff, dz) : 1. ;\n float od = smoothstep( (nf / 2.), nf, dz);\n float gz = clamp(cd * od, 0., 1.) ; \n\n if (dotp < 0.) discard; else \n gl_FragColor = mix(tx2,mix(mix(tx1,tx3,tx3.a),tx2,tx2.a),gz);\n}\n</script>\n<script name=\"panelHilite3gl\" type=\"x-shader/x-vertex\">\n attribute vec3 vertexPosition;\n attribute vec2 vertexTexCoord;\n\n varying vec2 texCoord;\n varying vec3 I;\n varying float dotp;\n\n uniform mat4 modelViewProjectionMatrix;\n uniform mat4 modelViewMatrix;\n uniform mat4 modelMatrix;\n uniform mat4 normalMatrix;\n void main() {\n vec4 vertexNormal=vec4(0.,0.,1.,0.);\n vec4 vp = vec4(vertexPosition, 1.0);\n gl_Position = modelViewProjectionMatrix * vp;\n texCoord = vertexTexCoord;\n vec3 vv = vec3(modelViewMatrix * vp);\n vec3 N = vec3(normalize(normalMatrix * vertexNormal));\n I = vv.xyz - vec3(0);\n dotp = dot(N,normalize(I));\n }\n </script>\n\n<script name=\"panelTrafficgl\" type=\"x-shader/x-fragment\">\n precision mediump float;\n varying vec2 texCoord;\n varying vec3 I;\n varying float dotp;\n \n uniform sampler2D imgA;\n uniform sampler2D imgB;\n uniform float state;\n uniform float ff;\n uniform float nf;\n uniform float tick;\n\nvoid main(void) {\n vec4 tx1 = texture2D(imgA,texCoord);\n vec4 tx2 = texture2D(imgB,texCoord);\n float istate = state==0. ? 1.+floor(mod(tick*10.,3.)) : state;\n vec4 hlt = vec4(istate<=2.?1.:0.,istate>=2.?1.:0.,0.,tx2.a);\n\n vec4 rx2 = istate==1.? tx2.r * hlt : istate==2.?tx2.g*hlt : istate==3.? tx2.b * hlt : vec4(0.);\n\n float dz = length(I);\n float cd = (ff > 0.) ? smoothstep( (ff * 2.), ff, dz) : 1. ;\n float od = smoothstep( (nf / 2.), nf, dz);\n float gz = clamp(cd * od, 0., 1.) ; \n\n if (dotp < 0.) discard; else \n gl_FragColor = mix(rx2,mix(tx1,rx2,rx2.a),gz);\n}\n</script>\n<script name=\"panelTrafficgl\" type=\"x-shader/x-vertex\">\n attribute vec3 vertexPosition;\n attribute vec2 vertexTexCoord;\n\n varying vec2 texCoord;\n varying vec3 I;\n varying float dotp;\n\n uniform mat4 modelViewProjectionMatrix;\n uniform mat4 modelViewMatrix;\n uniform mat4 modelMatrix;\n uniform mat4 normalMatrix;\n void main() {\n vec4 vertexNormal=vec4(0.,0.,1.,0.);\n vec4 vp = vec4(vertexPosition, 1.0);\n gl_Position = modelViewProjectionMatrix * vp;\n texCoord = vertexTexCoord;\n vec3 vv = vec3(modelViewMatrix * vp);\n vec3 N = vec3(normalize(normalMatrix * vertexNormal));\n I = vv.xyz - vec3(0);\n dotp = dot(N,normalize(I));\n }\n </script>"
+                  },
+                  "name": "twx-tml-text"
+                },
+                {
+                  "attributes": {
+                    "twx-widget": "",
+                    "widget-id": "hero",
+                    "widget-name": "hero",
+                    "modelloaded-expression": "onload()",
+                    "is-widget-container": "true",
+                    "src": "Uploaded/machine-illustration4c_Med.pvz",
+                    "scale": "1.0000",
+                    "x": "-4",
+                    "y": "1",
+                    "rx": "-90.00",
+                    "ry": "0.00",
+                    "rz": "0.00",
+                    "sequence": "Uploaded/l-Creo 3D - hololens.pvi"
+                  },
+                  "name": "twx-dt-model",
+                  "children": [
+                    {
+                      "name": "twx-container-content"
+                    }
+                  ]
+                },
+                {
+                  "attributes": {
+                    "twx-widget": "",
+                    "widget-id": "insides",
+                    "widget-name": "insides",
+                    "is-widget-container": "true",
+                    "src": "Uploaded/harpak-insides.pvz",
+                    "scale": "1.0000",
+                    "x": "-4",
+                    "y": "1",
+                    "rx": "-90.00",
+                    "ry": "0.00",
+                    "rz": "0.00"
+                  },
+                  "name": "twx-dt-model",
+                  "children": [
+                    {
+                      "name": "twx-container-content"
+                    }
+                  ]
+                },
+                {
+                  "attributes": {
+                    "twx-widget": "",
+                    "widget-id": "sensor1",
+                    "widget-name": "sensor1",
+                    "is-widget-container": "true",
+                    "src": "Uploaded/panelInfo3.png",
+                    "scale": "0.2500",
+                    "x": "3.2094",
+                    "y": "1.3381",
+                    "z": "0.0700",
+                    "rx": "-180.00",
+                    "ry": "0.84",
+                    "rz": "-179.99"
+                  },
+                  "name": "twx-dt-image",
+                  "children": [
+                    {
+                      "name": "twx-container-content"
+                    }
+                  ]
+                },
+                {
+                  "attributes": {
+                    "twx-widget": "",
+                    "widget-id": "sensor2",
+                    "widget-name": "sensor2",
+                    "is-widget-container": "true",
+                    "src": "Uploaded/panelInfo1.png",
+                    "scale": "0.2500",
+                    "x": "0.2004",
+                    "y": "1.0968",
+                    "z": "-0.1157",
+                    "rx": "-180.00",
+                    "ry": "0.84",
+                    "rz": "-179.99"
+                  },
+                  "name": "twx-dt-image",
+                  "children": [
+                    {
+                      "attributes": {
+                        "eventbind-id": "eb-1683819766206",
+                        "source-type": "widget",
+                        "source-label": "3D Image",
+                        "source-name": "sensor2",
+                        "source-event": "click",
+                        "handler-type": "ui",
+                        "handler-name": "hero",
+                        "handler-service": "playAll",
+                        "handler-path": "app.view[\"Home\"].wdg[\"hero\"].svc.playAll"
+                      },
+                      "name": "twx-eventbind"
+                    },
+                    {
+                      "name": "twx-container-content"
+                    }
+                  ]
+                },
+                {
+                  "attributes": {
+                    "twx-widget": "",
+                    "widget-id": "sensor3",
+                    "widget-name": "sensor3",
+                    "is-widget-container": "true",
+                    "src": "Uploaded/panelInfo1.png",
+                    "scale": "0.2500",
+                    "x": "4.5099",
+                    "y": "0.7966",
+                    "z": "0.0890",
+                    "rx": "-180.00",
+                    "ry": "0.84",
+                    "rz": "-179.99",
+                    "pivot": "7"
+                  },
+                  "name": "twx-dt-image",
+                  "children": [
+                    {
+                      "name": "twx-container-content"
+                    }
+                  ]
+                },
+                {
+                  "attributes": {
+                    "twx-widget": "",
+                    "widget-id": "billboard-1",
+                    "widget-name": "billboard-1",
+                    "auto": "true",
+                    "affects": "sensor1,sensor2,sensor3"
+                  },
+                  "name": "twx-billboard"
+                },
+                {
+                  "attributes": {
+                    "twx-widget": "",
+                    "widget-id": "target-hidden",
+                    "widget-name": "target-hidden",
+                    "is-widget-container": "true",
+                    "src": "Uploaded/harpakMT_Med.pvz",
+                    "x": "-4",
+                    "y": "1",
+                    "rx": "-90",
+                    "visible": "false"
+                  },
+                  "name": "twx-dt-model",
+                  "children": [
+                    {
+                      "name": "twx-container-content"
+                    }
+                  ]
+                },
+                {
+                  "attributes": {
+                    "twx-widget": "",
+                    "widget-id": "modelTarget-2",
+                    "advanced-guide-url": "_generated_/mtg/265a050a-b61d-4afa-9892-d3cb52e84a5d-1.png",
+                    "model-uuid": "84ad5e32649523ceae9aa0214602ef2f5e6195016102be3cc5bce02758cb0b8c",
+                    "detection-position": "{\"globalPosition\":{\"x\":2.1941185444081635,\"y\":-0.4396770412589844,\"z\":7.206490575648353},\"axisAngle\":{\"x\":0.6630788539175309,\"y\":1.2989416482602778,\"z\":-1.0998962396401069,\"w\":2.553342709752723},\"cameraLocation\":{\"position\":{\"x\":3.085874080657959,\"y\":1.788020372390747,\"z\":-2.4719204902648926,\"valid\":true},\"orientation\":{\"x\":170.79971313476562,\"y\":53.803810119628906,\"z\":-179.4357147216797},\"scale\":{\"x\":0.9999998807907104,\"y\":0.9999998807907104,\"z\":0.9999998807907104},\"valid\":true},\"modelScale\":1,\"origModelSize\":{\"x\":9.873000144958496,\"y\":2.0352001190185547,\"z\":1.2476999759674072},\"advancedViews\":[{\"name\":\"viewpoint_0000\",\"layout\":\"landscape\",\"guideViewPosition\":{\"translation\":[0,0,0],\"rotation\":[0,0,0,1]},\"targetExtentPreset\":\"FULL_MODEL\",\"recognitionRanges\":{\"rotation\":[0.28990251018156105,0.5762765048992645,0.6805637897011567,0.3474116472415941],\"azimRange\":[-3.141592653589793,3.141592653589793],\"elevRange\":[-1.5707963267948966,1.5707963267948966],\"rollRange\":[-3.141592653589793,3.141592653589793]}}]}",
+                    "detection-warnings": "true",
+                    "target-id": "265a050a-b61d-4afa-9892-d3cb52e84a5d",
+                    "widget-name": "modelTarget-2",
+                    "trackingacquired-expression": "go()",
+                    "url": "_generated_/mtg/265a050a-b61d-4afa-9892-d3cb52e84a5d-1.png",
+                    "x": "-4",
+                    "y": "1",
+                    "rx": "-90",
+                    "model": "model-1"
+                  },
+                  "name": "twx-dt-target-model-combined"
+                },
+                {
+                  "attributes": {
+                    "twx-widget": "",
+                    "widget-id": "sensor4",
+                    "widget-name": "sensor4",
+                    "is-widget-container": "true",
+                    "src": "Uploaded/panelInfo1.png",
+                    "scale": "0.2500",
+                    "x": "3.9214",
+                    "y": "0.7965",
+                    "z": "0.0804",
+                    "rx": "-180.00",
+                    "ry": "0.84",
+                    "rz": "-179.99",
+                    "pivot": "7"
+                  },
+                  "name": "twx-dt-image",
+                  "children": [
+                    {
+                      "name": "twx-container-content"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "twx-fragment-parameters"
+    },
+    {
+      "name": "twx-view-data"
+    }
+  ],
+  "name": "twx-view"
+}

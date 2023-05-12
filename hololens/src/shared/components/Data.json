@@ -1,0 +1,119 @@
+{
+  "attributes": {
+    "namespace": "app.mdl"
+  },
+  "children": [
+    {
+      "attributes": {
+        "id": "vumark",
+        "isbound": "false",
+        "isdeletable": "false",
+        "name": "ThingMark",
+        "value": ""
+      },
+      "name": "twx-app-param"
+    },
+    {
+      "attributes": {
+        "id": "template",
+        "isbound": "false",
+        "isdeletable": "false",
+        "name": "Thing Template",
+        "value": ""
+      },
+      "name": "twx-app-param"
+    },
+    {
+      "attributes": {
+        "id": "thing",
+        "isbound": "false",
+        "isdeletable": "false",
+        "name": "Thing",
+        "value": "desaturatedgl;blend f 0;nearFade f 1.5"
+      },
+      "name": "twx-app-param"
+    },
+    {
+      "attributes": {
+        "name": "doubletap",
+        "isdeletable": "false",
+        "isvoicealiasable": "true"
+      },
+      "name": "twx-app-event",
+      "children": [
+        {
+          "attributes": {
+            "eventbind-id": "eb-dce3b0e0-43fe-4e81-acd2-9a9dfdd351a1",
+            "source-type": "event",
+            "source-label": "Application Event",
+            "source-name": "app",
+            "source-event": "doubletap",
+            "handler-type": "ui",
+            "handler-name": "hero",
+            "handler-service": "play",
+            "handler-path": "app.view[\"Home\"].wdg[\"hero\"].svc.play"
+          },
+          "name": "twx-eventbind"
+        }
+      ]
+    },
+    {
+      "attributes": {
+        "name": "swipeleft",
+        "isdeletable": "false",
+        "isvoicealiasable": "true"
+      },
+      "name": "twx-app-event"
+    },
+    {
+      "attributes": {
+        "name": "swiperight",
+        "isdeletable": "false",
+        "isvoicealiasable": "true"
+      },
+      "name": "twx-app-event"
+    },
+    {
+      "attributes": {
+        "name": "swipeforward",
+        "isdeletable": "false",
+        "isvoicealiasable": "true"
+      },
+      "name": "twx-app-event"
+    },
+    {
+      "attributes": {
+        "name": "swipeback",
+        "isdeletable": "false",
+        "isvoicealiasable": "true"
+      },
+      "name": "twx-app-event"
+    },
+    {
+      "attributes": {
+        "name": "swipeup",
+        "isdeletable": "false",
+        "isvoicealiasable": "true"
+      },
+      "name": "twx-app-event"
+    },
+    {
+      "attributes": {
+        "name": "hold",
+        "isdeletable": "false",
+        "isvoicealiasable": "true"
+      },
+      "name": "twx-app-event"
+    },
+    {
+      "attributes": {
+        "name": "stopscan",
+        "isdeletable": "false",
+        "isvoicealiasable": "true",
+        "voicealias": "Stop Scan"
+      },
+      "name": "twx-app-event"
+    }
+  ],
+  "name": "twx-app-mdl"
+}

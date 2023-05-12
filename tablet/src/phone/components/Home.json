@@ -1,0 +1,349 @@
+{
+  "attributes": {
+    "twx-widget": "",
+    "widget-id": "view-1",
+    "widget-name": "view-1",
+    "is-widget-container": "true",
+    "viewtype": "ar"
+  },
+  "children": [
+    {
+      "name": "twx-container-content",
+      "children": [
+        {
+          "attributes": {
+            "twx-widget": "",
+            "widget-id": "3DContainer-1",
+            "widget-name": "3D Container",
+            "is-widget-container": "true",
+            "enabletrackingevents": "true",
+            "dropshadow": "true"
+          },
+          "name": "twx-dt-view",
+          "children": [
+            {
+              "name": "twx-container-content",
+              "children": [
+                {
+                  "attributes": {
+                    "twx-widget": "",
+                    "widget-id": "hero-animation",
+                    "widget-name": "hero-animation",
+                    "is-widget-container": "true",
+                    "src": "Uploaded/S5503.pvz",
+                    "rx": "-90",
+                    "sequence": "Uploaded/l-Creo 3D - Figure 1.pvi"
+                  },
+                  "name": "twx-dt-model",
+                  "children": [
+                    {
+                      "name": "twx-container-content"
+                    }
+                  ]
+                },
+                {
+                  "attributes": {
+                    "twx-widget": "",
+                    "widget-id": "spatial-shell",
+                    "widget-name": "spatial-shell",
+                    "is-widget-container": "true",
+                    "src": "Uploaded/harpak-shell.pvz",
+                    "rx": "-90",
+                    "visible": "false",
+                    "opacity": "0.5"
+                  },
+                  "name": "twx-dt-model",
+                  "children": [
+                    {
+                      "name": "twx-container-content"
+                    }
+                  ]
+                },
+                {
+                  "attributes": {
+                    "twx-widget": "",
+                    "widget-id": "wayfinder",
+                    "labels-on-top": "true",
+                    "waypoints-data": "[]",
+                    "widget-name": "wayfinder",
+                    "is-widget-container": "true"
+                  },
+                  "name": "twx-dt-wayfinder",
+                  "children": [
+                    {
+                      "attributes": {
+                        "databind-id": "db-1683323004933",
+                        "source-type": "data",
+                        "source-name": "waypointList",
+                        "source-item-type": "value",
+                        "source-item-name": "waypointList",
+                        "binding-type": "custom_field",
+                        "from-expression": "app.params['waypointList']",
+                        "to-property": "waypointsData"
+                      },
+                      "name": "twx-databind"
+                    },
+                    {
+                      "attributes": {
+                        "databind-id": "db-1683323044433",
+                        "source-type": "ui",
+                        "source-label": "Model",
+                        "source-name": "hero-animation",
+                        "source-item-type": "property",
+                        "source-item-name": "currentStep",
+                        "binding-type": "widget_property",
+                        "from-expression": "app.view['Home'].wdg['hero-animation']['currentStep']",
+                        "to-property": "selectedWaypointIndex"
+                      },
+                      "name": "twx-databind",
+                      "children": [
+                        {
+                          "attributes": {
+                            "filter-id": "df-1683323611712",
+                            "filter-body": "return value - 1;"
+                          },
+                          "name": "twx-data-filter"
+                        }
+                      ]
+                    },
+                    {
+                      "attributes": {
+                        "databind-id": "db-1683892336877",
+                        "source-type": "data",
+                        "source-name": "vumark",
+                        "source-item-type": "value",
+                        "source-item-name": "vumark",
+                        "binding-type": "custom_field",
+                        "from-expression": "app.params['vumark']",
+                        "to-property": "labelsOnTop"
+                      },
+                      "name": "twx-databind"
+                    },
+                    {
+                      "name": "twx-container-content"
+                    }
+                  ]
+                },
+                {
+                  "attributes": {
+                    "twx-widget": "",
+                    "widget-id": "model-3",
+                    "widget-name": "model-3",
+                    "is-widget-container": "true",
+                    "src": "Uploaded/cube.pvz",
+                    "scale": "0.5000",
+                    "x": "4.1225",
+                    "y": "-0.4059",
+                    "z": "-1.0465",
+                    "rx": "0.00",
+                    "ry": "0.00",
+                    "rz": "0.00",
+                    "visible": "false"
+                  },
+                  "name": "twx-dt-model",
+                  "children": [
+                    {
+                      "name": "twx-container-content"
+                    }
+                  ]
+                },
+                {
+                  "attributes": {
+                    "twx-widget": "",
+                    "widget-id": "target-hidden",
+                    "widget-name": "target-hidden",
+                    "is-widget-container": "true",
+                    "src": "Uploaded/harpakMT_Med.pvz",
+                    "scale": "1.0000",
+                    "x": "0.0000",
+                    "y": "0.0000",
+                    "rx": "-90.00",
+                    "ry": "0.00",
+                    "rz": "0.00",
+                    "visible": "false"
+                  },
+                  "name": "twx-dt-model",
+                  "children": [
+                    {
+                      "name": "twx-container-content"
+                    }
+                  ]
+                },
+                {
+                  "attributes": {
+                    "twx-widget": "",
+                    "widget-id": "modelTarget-3",
+                    "advanced-guide-url": "_generated_/mtg/dba2d11d-e00d-42a4-9bda-7ffe9a483e85-2.png",
+                    "model-uuid": "84ad5e32649523ceae9aa0214602ef2f5e6195016102be3cc5bce02758cb0b8c",
+                    "detection-position": "{\"globalPosition\":{\"x\":1.7899351016235587,\"y\":-0.9315064141614341,\"z\":6.718026235326599},\"axisAngle\":{\"x\":0.7584728875129241,\"y\":1.244106858340164,\"z\":-0.9665402991651751,\"w\":2.491492394195653},\"cameraLocation\":{\"position\":{\"x\":6.811015605926514,\"y\":0.7582418918609619,\"z\":-1.496189832687378,\"valid\":true},\"orientation\":{\"x\":165.68690490722656,\"y\":62.73735809326172,\"z\":180},\"scale\":{\"x\":1,\"y\":0.9999999403953552,\"z\":1},\"valid\":true},\"modelScale\":1,\"origModelSize\":{\"x\":9.873000144958496,\"y\":2.0351998805999756,\"z\":1.2476999759674072},\"advancedViews\":[{\"name\":\"viewpoint_0000\",\"layout\":\"landscape\",\"guideViewPosition\":{\"translation\":[0,0,0],\"rotation\":[0,0,0,1]},\"targetExtentPreset\":\"FULL_MODEL\",\"recognitionRanges\":{\"rotation\":[0.3193562908996151,0.5238332949053736,0.6742653103875695,0.4110675489738577],\"azimRange\":[-3.141592653589793,3.141592653589793],\"elevRange\":[-1.5707963267948966,1.5707963267948966],\"rollRange\":[-3.141592653589793,3.141592653589793]}}]}",
+                    "static-mode-str": "true",
+                    "detection-warnings": "true",
+                    "target-id": "dba2d11d-e00d-42a4-9bda-7ffe9a483e85",
+                    "widget-name": "modelTarget-3",
+                    "trackingacquired-expression": "init()",
+                    "url": "_generated_/mtg/dba2d11d-e00d-42a4-9bda-7ffe9a483e85-2.png",
+                    "rx": "-90",
+                    "model": "target-hidden"
+                  },
+                  "name": "twx-dt-target-model-combined"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "attributes": {
+            "twx-widget": "",
+            "widget-id": "2DOverlay-1",
+            "widget-name": "2D Overlay",
+            "is-widget-container": "true"
+          },
+          "name": "twx-overlay",
+          "children": [
+            {
+              "name": "twx-container-content",
+              "children": [
+                {
+                  "attributes": {
+                    "twx-widget": "",
+                    "widget-id": "panel-1",
+                    "widget-name": "Top Panel",
+                    "is-widget-container": "true",
+                    "position": "top"
+                  },
+                  "name": "twx-overlay-container",
+                  "children": [
+                    {
+                      "name": "twx-container-content"
+                    }
+                  ]
+                },
+                {
+                  "attributes": {
+                    "twx-widget": "",
+                    "widget-id": "2DOverlayBody-1",
+                    "widget-name": "2D Body",
+                    "is-widget-container": "true"
+                  },
+                  "name": "twx-overlay-body",
+                  "children": [
+                    {
+                      "name": "twx-container-content",
+                      "children": [
+                        {
+                          "attributes": {
+                            "twx-widget": "",
+                            "widget-id": "panel-2",
+                            "widget-name": "Left Panel",
+                            "is-widget-container": "true",
+                            "position": "left"
+                          },
+                          "name": "twx-overlay-container",
+                          "children": [
+                            {
+                              "name": "twx-container-content"
+                            }
+                          ]
+                        },
+                        {
+                          "attributes": {
+                            "twx-widget": "",
+                            "widget-id": "panel-3",
+                            "widget-name": "Center Panel",
+                            "is-widget-container": "true",
+                            "position": "center"
+                          },
+                          "name": "twx-overlay-container",
+                          "children": [
+                            {
+                              "name": "twx-container-content"
+                            }
+                          ]
+                        },
+                        {
+                          "attributes": {
+                            "twx-widget": "",
+                            "widget-id": "panel-4",
+                            "widget-name": "Right Panel",
+                            "is-widget-container": "true",
+                            "position": "right"
+                          },
+                          "name": "twx-overlay-container",
+                          "children": [
+                            {
+                              "name": "twx-container-content"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "attributes": {
+                    "twx-widget": "",
+                    "widget-id": "panel-5",
+                    "widget-name": "Bottom Panel",
+                    "is-widget-container": "true",
+                    "position": "bottom"
+                  },
+                  "name": "twx-overlay-container",
+                  "children": [
+                    {
+                      "name": "twx-container-content",
+                      "children": [
+                        {
+                          "attributes": {
+                            "twx-widget": "",
+                            "widget-id": "textArea-1",
+                            "widget-name": "textArea-1",
+                            "padding": "20px",
+                            "margin": "10px"
+                          },
+                          "name": "twx-textarea"
+                        },
+                        {
+                          "attributes": {
+                            "twx-widget": "",
+                            "widget-id": "button-1",
+                            "widget-name": "button-1",
+                            "text": "Next",
+                            "class": "btn"
+                          },
+                          "name": "twx-button",
+                          "children": [
+                            {
+                              "attributes": {
+                                "eventbind-id": "eb-1683319729984",
+                                "source-type": "widget",
+                                "source-label": "Button",
+                                "source-name": "button-1",
+                                "source-event": "click",
+                                "handler-type": "ui",
+                                "handler-name": "hero-animation",
+                                "handler-service": "play",
+                                "handler-path": "app.view[\"Home\"].wdg[\"hero-animation\"].svc.play"
+                              },
+                              "name": "twx-eventbind"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "twx-fragment-parameters"
+    },
+    {
+      "name": "twx-view-data"
+    }
+  ],
+  "name": "twx-view"
+}
