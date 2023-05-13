@@ -11,6 +11,8 @@ $scope.$watch('view.wdg["hero-animation"].currentStep', function(val) {
   console.log('2',val);
   $scope.app.params.stepIndex = val - 1;
   $scope.app.params.waypointList[$scope.app.params.stepIndex].label = $scope.app.params.stepLabel;
+    //addCG
+  $scope.app.params.stepHeader = val + ' of 13';
 
 //  tml3dRenderer.setProperties("activeWaypointLabel",{billboard:false, occluding: true});
 //  tml3dRenderer.setScale("activeWaypointLabel",0.15,0.15,0.15);
@@ -48,3 +50,73 @@ $scope.$watch("app.view['Home'].wdg['wayfinder']['value']",function(changed) {
 $scope.init = function() {
   $scope.view.wdg['textArea-1']['text'] = "Let's get started - find the power switch. Disable power, and apply lock out tafg to ensure safety";
 };
+
+////////////////////////////////////////CG ADD////////////////////////////
+
+
+            ////////////add from SG HL EXPERIENCE
+function xr(xp,override) {
+  var shader = override != undefined || twx.app.isPreview() ? 'xray2gl'+xp : 'xray2hl'+xp;
+  return shader;
+}
+
+function hl(xp,override) {
+  var shader = override != undefined || twx.app.isPreview() ? 'desaturatedgl'+xp : 'desaturatedhl'+xp;
+  return shader;
+}
+
+
+function ps(xp,override) {
+  var shader = override != undefined || twx.app.isPreview() ? 'panelHilite2gl'+xp : 'panelHilite2hl'+xp;
+  return shader;
+}
+
+
+           ////////////New code
+var heroMode = false;
+
+$scope.heroMode = function(){
+ 
+  heroMode = true;
+  // $scope.view.wdg['spatial-shell']['visible'] = true;
+  $scope.view.wdg['hero-animation']['sequence'] = '';
+  $scope.view.wdg['heroHL']['visible'] = true;
+  $scope.view.wdg['heroHL']['sequence'] = 'app/resources/Uploaded/machine-illustration4c_Med/l-Creo%203D%20-%20hololens.pvi';
+  $scope.view.wdg['wayfinder']['enabled'] = false;
+  
+    
+  $timeout(function() {
+       $scope.view.wdg['hero-animation']['visible'] = false;
+       $scope.view.wdg['heroHL']['visible'] = true;
+       $scope.view.wdg['insidesHL']['visible'] = true;
+       $scope.view.wdg.heroHL.shader = xr(";r f 1.0;g f 1.0;b f 0.0;farFade f 3;nearFade f 0.2");
+       $scope.view.wdg.insidesHL.shader = xr(";r f 0.0;g f 1.0;b f 0.0;farFade f 3;nearFade f 0.5");
+  }, 300);
+  
+  
+}
+
+$scope.animationMode = function(){
+  heroMode = false;
+  $scope.view.wdg['hero-animation']['sequence'] = 'app/resources/Uploaded/S5503/l-Creo%203D%20-%20Figure%201.pvi';
+  $scope.view.wdg['heroHL']['sequence'] = '';
+  $scope.init();
+   $scope.view.wdg['wayfinder']['enabled'] = true;
+    
+  $timeout(function() {
+       $scope.view.wdg['hero-animation']['visible'] = false;
+       $scope.view.wdg['heroHL']['visible'] = true;;
+       $scope.view.wdg['insidesHL']['visible'] = true;
+       $scope.view.wdg.heroHL.shader = xr(";r f 1.0;g f 1.0;b f 0.0;farFade f 3;nearFade f 0.2");
+       $scope.view.wdg.insidesHL.shader = xr(";r f 0.0;g f 1.0;b f 0.0;farFade f 3;nearFade f 0.5");
+  }, 200);
+  
+  
+}
+
+$scope.showPanel = function(){
+ if (heroMode==false) {
+   $scope.app.fn.triggerWidgetService('popup-1','showpopup');
+ }
+  
+}
